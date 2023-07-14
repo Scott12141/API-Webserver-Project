@@ -42,9 +42,15 @@ def auth_login():
     # Query the database to find a user by their email address
     qry = db.select(User).filter_by(email = body_data.get('email'))
     user = db.session.scalar(qry)
-    if user and bcrypt.check_password_hash(user.password, body_data.get('password')):
-        token = create_access_token(identity=str(user.id), expires_delta=timedelta(days=7))
-        return {'email': user.email, 'token': token}
+    # If the query from the DB returns a valid email then check the password hash on the DB and return a token for the user
+    # If the query of the DB doesnt match a valid user email then return email error message
+    # If the valid email matches but the password hash doesnt return password error message
+    if user:
+        if bcrypt.check_password_hash(user.password, body_data.get('password')):
+            token = create_access_token(identity=str(user.id), expires_delta=timedelta(days=7))
+            return {'email': user.email, 'token': token}
+        else:
+            return {'error': "password was incorrect, please try again"}, 401
     else:
-        return {'error': "email does not exist or password was incorrect, please try again"}, 401
+        return {'error': "email does not exist, please try again"}, 401
     
