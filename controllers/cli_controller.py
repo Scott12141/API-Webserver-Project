@@ -1,13 +1,10 @@
 from init import db, bcrypt
 from flask import Blueprint
 from models.user import User
+from models.product import Product
 
 
 db_commands = Blueprint('db',  __name__)
-
-# auth_routes = Blueprint('auth', __name__, url_prefix='/auth')
-
-# @auth_routes.route('/register')
 
 
 @db_commands.cli.command('drop')
@@ -45,8 +42,30 @@ def seed_db():
             password = bcrypt.generate_password_hash('john123').decode('utf-8'),
         )
     ]
-
     db.session.add_all(users)
+
+    products = [
+        Product(
+            name = 'Celebration',
+            description = 'Birthday, Anniversary etc.',
+            price = 160.00,
+            prep_days = 2
+        ),
+        Product(
+            name = 'Wedding',
+            description = 'Multi-tiered etc.',
+            price = 450.00,
+            prep_days = 5
+        ),
+        Product(
+            name = 'Cupcakes',
+            description = 'Various kinds by the dozen etc.',
+            price = 35.00,
+            prep_days = 1
+        )
+    ]
+    db.session.add_all(products)
+
     db.session.commit()
 
     print("Tables Seeded")

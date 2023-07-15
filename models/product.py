@@ -7,12 +7,12 @@ class Product(db.Model):
     name = db.Column(db.String, nullable = False)
     description = db.Column(db.Text, nullable = False)
     price = db.Column(db.Float, default = 0.00)
-    preparation_time = db.Column(db.String, nullable = False)
+    prep_days = db.Column(db.Integer, nullable = False)
     
 
 class ProductSchema(ma.Schema):
     class Meta:
-        fields = ('id', 'name', 'description', 'price', 'preparation_time')
+        fields = ('id', 'name', 'description', 'price', 'prep_days')
         ordered = True
 
 product_schema = ProductSchema()
