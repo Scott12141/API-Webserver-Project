@@ -2,6 +2,7 @@ from init import db, bcrypt
 from flask import Blueprint
 from models.user import User
 from models.product import Product
+from models.comment import Comment
 
 
 db_commands = Blueprint('db',  __name__)
@@ -65,6 +66,26 @@ def seed_db():
         )
     ]
     db.session.add_all(products)
+
+    comments = [
+        Comment(
+            message = "Birthday cake I bought looked so good and was delicious!",
+            user = users[1],
+            product = products[0]
+        ),
+        Comment(
+            message = "I bought a 3 tiered weedding cake and it looked magnificent and tasted even better!",
+            user = users[2],
+            product = products[1]
+        ),
+        Comment(
+            message = "Cupcake filling was so good, 10/10",
+            user = users[1],
+            product = products[2]
+        )
+    ]
+
+    db.session.add_all(comments)
 
     db.session.commit()
 
