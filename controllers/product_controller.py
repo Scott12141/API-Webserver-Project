@@ -1,8 +1,10 @@
-from init import db
+from init import db, jwt
 from flask import Blueprint, request
 from models.product import Product, product_schema, products_schema
 from sqlalchemy.exc import IntegrityError
 from psycopg2 import errorcodes
+from flask_jwt_extended import get_jwt_identity, jwt_required
+from models.comment import Comment, comment_schema, comments_schema
 
 products_bp = Blueprint('products', __name__, url_prefix = '/products')
 
@@ -23,7 +25,7 @@ def get_one_product(id):
     if product:
         return product_schema.dump(product)
     else:
-        return {'error': f'Product not found with id {id}'}, 404
+        return {'error': f'Product with id {id} not found.'}, 404
     
 # NEEDS IS_ADMIN TO CREATE!!!!
 @products_bp.route('/', methods = ['POST'])
@@ -41,7 +43,7 @@ def create_product():
         return product_schema.dump(product), 201
     except IntegrityError as err:
         if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
-            return {'error': f'{err.orig.diag.column_name} is required for Product creation'}, 409
+            return {'error': f'{err.orig.diag.column_name} is required for Product creation.'}, 409
 
 
 # NEEDS IS_ADMIN TO DELETE!!!!
@@ -52,7 +54,7 @@ def delete_product(id):
     if product:
         db.session.delete(product)
         db.session.commit()
-        return {'message': f"Product {product.name} deleted successfully"}
+        return {'message': f"Product {product.name} deleted successfully."}
     else:
         return {'error': f'Product with id {id} not found'}
 
@@ -70,4 +72,55 @@ def update_product(id):
         db.session.commit()
         return product_schema.dump(product), 201
     else:
-        return {'error': f'Product with id {id} not found'}, 404
+        return {'error': f'Product with id {id} not found.'}, 404
+    
+
+# Adding Comment controllers to Products controller as comments only exist on a Product entity
+
+@products_bp.route('/<int:product_id>/comments', methods = ['POST'])
+@jwt_required()
+def create_comment(product_id):
+    body_data = request.get_json()
+    qry = db.select(Product).filter_by(id = product_id) 
+    product = db.session.scalar(qry)
+    if product:
+        comment = Comment(
+            message = body_data.get('message'),
+            user_id = get_jwt_identity(),
+            product = product
+        )
+        db.session.add(comment)
+        db.session.commit()
+        return comment_schema.dump(comment), 201
+    else:
+        return {'error': f'Product not found with id {product_id}.'}, 404
+        
+
+# No GET method for comments, all comments will exist and be related to products, so any GET product will display comments 
+
+
+@products_bp.route('/<int:product_id>/comments/<int:comment_id>', methods = ['DELETE'])
+@jwt_required()
+def delete_comment(product_id, comment_id):
+    qry = db.select(Comment).filter_by(id = comment_id)
+    comment = db.session.scalar(qry)
+    if comment:
+        db.session.delete(comment)
+        db.session.commit()
+        return {'message': f'Comment "{comment.message}" has been deleted successfully.'}
+    else: 
+        return {'error': f'Comment with id {comment_id} not found.'}, 404
+    
+
+@products_bp.route('/<int:product_id>/comments/<int:comment_id>', methods = ['PUT', 'PATCH'])
+@jwt_required()
+def edit_comment(product_id, comment_id):
+    body_data = request.get_json()
+    qry = db.select(Comment).filter_by(id = comment_id)
+    comment = db.session.scalar(qry)
+    if comment:
+        comment.message = body_data.get('message') or comment.message
+        db.session.commit()
+        return comment_schema.dump(comment)
+    else:
+        return {'error': f'Comment with id {comment_id} not found.'}
