@@ -3,6 +3,8 @@ from flask import Blueprint
 from models.user import User
 from models.product import Product
 from models.comment import Comment
+from models.order import Order
+from datetime import date
 
 
 db_commands = Blueprint('db',  __name__)
@@ -86,6 +88,27 @@ def seed_db():
     ]
 
     db.session.add_all(comments)
+
+    orders = [
+        Order(
+            date_ordered = date.today(),
+            quantity = '1',
+            status = 'In-queue',
+            delivery_pup_date = '2023/07/26',
+            user = users[1],
+            product = products[1]
+        ),
+        Order(
+            date_ordered = date.today(),
+            quantity = '1',
+            status = 'In-queue',
+            delivery_pup_date = '2023/07/23',
+            user = users[2],
+            product = products[0]
+        )
+    ]
+
+    db.session.add_all(orders)
 
     db.session.commit()
 

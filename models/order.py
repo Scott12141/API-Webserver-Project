@@ -7,10 +7,9 @@ class Order(db.Model):
 
     id = db.Column(db.Integer, primary_key = True)
     date_ordered = db.Column(db.Date)
-    quantity = db.Column(db.Integer)
-    status = db.Column(db.String)
-    delivery_pup_date = db.Column(db.Date)
-
+    quantity = db.Column(db.Integer, nullable = False)
+    status = db.Column(db.String, default = 'In-queue')
+    delivery_pup_date = db.Column(db.Date, nullable = False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable = False)
     product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable = False)
 
@@ -22,7 +21,7 @@ class OrderSchema(ma.Schema):
     product = fields.Nested('ProductSchema', exclude = ['comments'])
 
     class Meta:
-        fields = ('id', 'date_ordered', 'quantity', 'status', 'delivery_pup_date')
+        fields = ('id', 'user_id', 'date_ordered', 'product_id', 'quantity', 'status', 'delivery_pup_date')
         ordered = True
 
 order_schema = OrderSchema()

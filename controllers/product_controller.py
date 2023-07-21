@@ -5,6 +5,8 @@ from sqlalchemy.exc import IntegrityError
 from psycopg2 import errorcodes
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from models.comment import Comment, comment_schema, comments_schema
+from models.order import Order, order_schema, orders_schema
+from datetime import date
 
 products_bp = Blueprint('products', __name__, url_prefix = '/products')
 
@@ -74,6 +76,13 @@ def update_product(id):
     else:
         return {'error': f'Product with id {id} not found.'}, 404
     
+
+
+
+
+
+
+
 
 # Adding Comment controllers to Products controller as comments only exist on a Product entity
 

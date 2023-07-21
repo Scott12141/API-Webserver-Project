@@ -4,6 +4,7 @@ import os
 from controllers.cli_controller import db_commands
 from controllers.auth_controller import auth_bp
 from controllers.product_controller import products_bp
+from controllers.order_controller import orders_bp
 
 
 
@@ -23,5 +24,6 @@ def create_app():
     app.register_blueprint(db_commands)
     app.register_blueprint(auth_bp)
     app.register_blueprint(products_bp)
+    app.register_blueprint(orders_bp)
 
     return app
