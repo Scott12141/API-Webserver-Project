@@ -6,7 +6,7 @@ class Comment(db.Model):
     __tablename__ = 'comments'
 
     id = db.Column(db.Integer, primary_key = True)
-    message = db.Column(db.Text,)
+    message = db.Column(db.Text)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable = False)
     product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable = False)
 
