@@ -11,13 +11,15 @@ class Product(db.Model):
     prep_days = db.Column(db.Integer, nullable = False)
     
     comments = db.relationship('Comment', back_populates = 'product', cascade = 'all, delete')
+    orders = db.relationship('Order', back_populates = 'product', cascade = 'all, delete')
 
 class ProductSchema(ma.Schema):
 
     comments = fields.List(fields.Nested('CommentSchema'), exclude = ['product'])
+    orders = fields.List(fields.Nested('OrderSchema'), exclude = ['product'])
 
     class Meta:
-        fields = ('id', 'name', 'description', 'price', 'prep_days','comments')
+        fields = ('id', 'name', 'description', 'price', 'prep_days','comments', 'orders')
         ordered = True
 
 product_schema = ProductSchema()

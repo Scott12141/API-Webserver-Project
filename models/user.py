@@ -13,14 +13,15 @@ class User(db.Model):
     is_admin = db.Column(db.Boolean, default=False)
 
     comments = db.relationship('Comment', back_populates = 'user')
-
+    orders = db.relationship('Order', back_populates = 'user')
 
 class UserSchema(ma.Schema):
 
     comments = fields.List(fields.Nested('CommentSchema', exclude = ['user']))
+    orders = fields.List(fields.Nested('OrderSchema', exclude = ['user']))
 
     class Meta:
-        fields = ('id', 'first_name', 'last_name', 'address', 'email', 'password', 'is_admin', 'comments')
+        fields = ('id', 'first_name', 'last_name', 'address', 'email', 'password', 'is_admin', 'comments', 'orders')
         ordered = True
 
 user_schema = UserSchema(exclude=['password'])
