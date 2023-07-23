@@ -61,9 +61,27 @@ def seed_db():
             prep_days = 5
         ),
         Product(
-            name = 'Cupcakes',
+            name = 'Cupcakes x 6',
+            description = 'Various kinds by the half-dozen etc.',
+            price = 15.99,
+            prep_days = 1
+        ),
+        Product(
+            name = 'Cupcakes x 12',
             description = 'Various kinds by the dozen etc.',
             price = 35.00,
+            prep_days = 1
+        ),
+        Product(
+            name = 'Cupcakes x 18',
+            description = 'Various kinds one and a half dozen etc.',
+            price = 55.00,
+            prep_days = 1
+        ),
+        Product(
+            name = 'Cupcakes x 24',
+            description = 'Various kinds by the double-dozen etc.',
+            price = 75.00,
             prep_days = 1
         )
     ]

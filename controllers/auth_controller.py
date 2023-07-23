@@ -13,7 +13,7 @@ auth_bp = Blueprint('auth', __name__, url_prefix = '/auth')
 def auth_register():
     try:
         # retrieve data posted from the front end body in json format and store it in body_data
-        body_data = request.get_json()
+        body_data = user_schema.load(request.get_json())
         # then extract that data to the users model imported from the user models to create the user in the back end (database)
         user = User()
         user.first_name = body_data.get('first_name')
