@@ -4,9 +4,7 @@ from models.order import Order, order_schema, orders_schema
 from sqlalchemy.exc import IntegrityError
 from psycopg2 import errorcodes
 from flask_jwt_extended import get_jwt_identity, jwt_required
-from datetime import date, timedelta, datetime
-from models.product import Product
-from controllers.product_controller import products_bp
+from datetime import date, datetime
 from models.user import User
 
 
@@ -44,28 +42,23 @@ def get_one_order(id):
     else:
         return {'error': f'Order with id {id} not found.'}, 404
 
-@products_bp.route('/<int:product_id>/orders', methods = ['POST'])
+@orders_bp.route('/', methods = ['POST'])
 @jwt_required()
-def create_order(product_id):
+def create_order():
     try:
         body_data = order_schema.load(request.get_json())
-        qry = db.select(Product).filter_by(id = product_id)
-        product = db.session.scalar(qry)
-        if product:
-            order = Order(
-                date_ordered = date.today(),
-                user_id = get_jwt_identity(),
-                product = product,
-                quantity = body_data.get('quantity'),
-                status = 'In-queue',
-                delivery_pup_date = datetime.strptime(body_data.get('delivery_pup_date'),'%d/%m/%Y')
-            )
-            
-            db.session.add(order)
-            db.session.commit()
-            return order_schema.dump(order), 201
-        else:
-            return {'error': f'Product not found with id {product_id}.'}, 404
+        order = Order(
+            date_ordered = date.today(),
+            user_id = get_jwt_identity(),
+            product_id = body_data.get('product_id'),
+            quantity = body_data.get('quantity'),
+            status = 'In-queue',
+            description = body_data.get('description'),
+            delivery_pup_date = datetime.strptime(body_data.get('delivery_pup_date'),'%d/%m/%Y')
+        )
+        db.session.add(order)
+        db.session.commit()
+        return order_schema.dump(order), 201
     except IntegrityError as err:
         if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
             return {'error': f'{err.orig.diag.column_name} is required to order a product.'}, 409
@@ -79,16 +72,19 @@ def create_order(product_id):
 def edit_order(id):
     try:
         is_admin = authorise_as_admin()
-        if not is_admin:
-            return {'error': 'Not authorised to edit orders'}
         body_data = order_schema.load(request.get_json(), partial = True)
         qry = db.select(Order).where(Order.id == id)
         order = db.session.scalar(qry)
         if order:
-            order.status = body_data.get('status') or order.status
-            order.delivery_pup_date = datetime.strptime(body_data.get('delivery_pup_date'),'%d/%m/%Y') or order.delivery_pup_date
-            db.session.commit()
-            return order_schema.dump(order)
+            if is_admin or str(order.user_id) == get_jwt_identity():
+                order.product_id = body_data.get('product_id') or order.product_id
+                order.status = body_data.get('status') or order.status
+                order.description = body_data.get('description') or order.description
+                order.delivery_pup_date = order.delivery_pup_date or datetime.strptime(body_data.get('delivery_pup_date'),'%d/%m/%Y')
+                db.session.commit()
+                return order_schema.dump(order)
+            else:
+                return {'error': 'Only the user this order belongs to can edit it.'}
         else:
             return {'error': f'Order with id:{id} not found.'}
     except ValueError as err:

@@ -112,6 +112,7 @@ def seed_db():
             date_ordered = date.today(),
             quantity = '1',
             status = 'In-queue',
+            description = '2 tiered, red velvet, with white icing.',
             delivery_pup_date = '2023/07/26',
             user = users[1],
             product = products[1]
@@ -120,9 +121,19 @@ def seed_db():
             date_ordered = date.today(),
             quantity = '1',
             status = 'In-queue',
+            description = '6th Birthday spiderman mud cake for my son.',
             delivery_pup_date = '2023/07/23',
             user = users[2],
             product = products[0]
+        ),
+        Order(
+            date_ordered = date.today(),
+            quantity = '1',
+            status = 'In-queue',
+            description = '6 x mars bar filling, 6 x snickers filling.',
+            delivery_pup_date = '2023/07/23',
+            user = users[2],
+            product = products[3]
         )
     ]
 
