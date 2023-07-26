@@ -47,6 +47,8 @@ class OrderSchema(ma.Schema):
         body_data = request.get_json()
         product_id = body_data.get('product_id')
         qry = db.select(Product.prep_days).filter_by(id = product_id)
+        if product_id == None:
+            raise ValidationError('Please enter the product id you wish to edit.')
         prep_days = db.session.scalar(qry)
         available = date_ordered + timedelta(days = (prep_days + 1))
         date_available = datetime.strftime(available, '%Y-%m-%d')

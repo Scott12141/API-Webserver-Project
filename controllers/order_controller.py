@@ -76,11 +76,14 @@ def edit_order(id):
         qry = db.select(Order).where(Order.id == id)
         order = db.session.scalar(qry)
         if order:
+            if order.status in ['Preparing', 'Completed']:
+                return {'error': 'This order has already began preparation or has been completed and can no longer be edited.'}
             if is_admin or str(order.user_id) == get_jwt_identity():
                 order.product_id = body_data.get('product_id') or order.product_id
                 order.status = body_data.get('status') or order.status
                 order.description = body_data.get('description') or order.description
-                order.delivery_pup_date = order.delivery_pup_date or datetime.strptime(body_data.get('delivery_pup_date'),'%d/%m/%Y')
+                order.delivery_pup_date = datetime.strftime(order.delivery_pup_date, '%d/%m/%Y')
+                order.delivery_pup_date = datetime.strptime(body_data.get('delivery_pup_date') or order.delivery_pup_date ,'%d/%m/%Y')
                 db.session.commit()
                 return order_schema.dump(order)
             else:
