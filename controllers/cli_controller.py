@@ -61,9 +61,27 @@ def seed_db():
             prep_days = 5
         ),
         Product(
-            name = 'Cupcakes',
+            name = 'Cupcakes x 6',
+            description = 'Various kinds by the half-dozen etc.',
+            price = 15.99,
+            prep_days = 1
+        ),
+        Product(
+            name = 'Cupcakes x 12',
             description = 'Various kinds by the dozen etc.',
             price = 35.00,
+            prep_days = 1
+        ),
+        Product(
+            name = 'Cupcakes x 18',
+            description = 'Various kinds one and a half dozen etc.',
+            price = 55.00,
+            prep_days = 1
+        ),
+        Product(
+            name = 'Cupcakes x 24',
+            description = 'Various kinds by the double-dozen etc.',
+            price = 75.00,
             prep_days = 1
         )
     ]
@@ -94,6 +112,7 @@ def seed_db():
             date_ordered = date.today(),
             quantity = '1',
             status = 'In-queue',
+            description = '2 tiered, red velvet, with white icing.',
             delivery_pup_date = '2023/07/26',
             user = users[1],
             product = products[1]
@@ -102,9 +121,19 @@ def seed_db():
             date_ordered = date.today(),
             quantity = '1',
             status = 'In-queue',
+            description = '6th Birthday spiderman mud cake for my son.',
             delivery_pup_date = '2023/07/23',
             user = users[2],
             product = products[0]
+        ),
+        Order(
+            date_ordered = date.today(),
+            quantity = '1',
+            status = 'In-queue',
+            description = '6 x mars bar filling, 6 x snickers filling.',
+            delivery_pup_date = '2023/07/23',
+            user = users[2],
+            product = products[3]
         )
     ]
 
