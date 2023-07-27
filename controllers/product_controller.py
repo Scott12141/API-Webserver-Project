@@ -52,7 +52,8 @@ def create_product():
             name = body_data.get('name'),
             description = body_data.get("description"),
             price = body_data.get('price'),
-            prep_days = body_data.get('prep_days')
+            prep_days = body_data.get('prep_days'),
+            user_id = get_jwt_identity()
         )
         db.session.add(product)
         # Commit added product to the database
@@ -115,6 +116,7 @@ def update_product(id):
             product.description = body_data.get("description") or product.description
             product.price = body_data.get('price') or product.price
             product.prep_days = body_data.get('prep_days') or product.prep_days
+            product.user_id = get_jwt_identity()
             db.session.commit()
             # Return the altered product schema for the product matching the id 
             return product_schema.dump(product), 201

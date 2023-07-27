@@ -43,7 +43,7 @@ def create_comment(product_id):
 @comments_bp.route('/<int:comment_id>', methods = ['DELETE'])
 # JSON Web Token required from login to use this method
 @jwt_required()
-def delete_comment(comment_id):
+def delete_comment(product_id, comment_id):
     # Checks to see if the user trying to post a product has is_admin attribute in the database
     is_admin = authorise_as_admin()
     # Query the database to find the comment id parsed as the arguement of the fuction in the comments table
@@ -72,7 +72,7 @@ def delete_comment(comment_id):
 @comments_bp.route('/<int:comment_id>', methods = ['PUT', 'PATCH'])
 # JSON Web Token required from login to use this method
 @jwt_required()
-def edit_comment(comment_id):
+def edit_comment(product_id, comment_id):
     # retrieve JSON data parsed into the body from the front end as a python object and store it in body_data
     body_data = request.get_json()
     # Query the database to find the comment id parsed as the arguement of the fuction in the comments table

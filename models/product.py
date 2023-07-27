@@ -10,14 +10,18 @@ class Product(db.Model):
     description = db.Column(db.Text, nullable = False)
     price = db.Column(db.Float, nullable = False)
     prep_days = db.Column(db.Integer, nullable = False)
+
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable = False)
     
     comments = db.relationship('Comment', back_populates = 'product', cascade = 'all, delete')
     orders = db.relationship('Order', back_populates = 'product', cascade = 'all, delete')
+    user = db.relationship('User', back_populates = 'products')
 
 class ProductSchema(ma.Schema):
 
     comments = fields.List(fields.Nested('CommentSchema'), exclude = ['product'])
     orders = fields.List(fields.Nested('OrderSchema'), exclude = ['product'])
+    user = fields.List(fields.Nested('UserSchema'), only = ['is_admin'], exclude = ['product'])
 
     # Validates that the name of the product is at least 4 letters long
     name = fields.String(required = True, validate = Length(min = 4, error = 'Product name must be at least the length of cake.'))
