@@ -21,10 +21,18 @@ class UserSchema(ma.Schema):
     comments = fields.List(fields.Nested('CommentSchema', exclude = ['user']))
     orders = fields.List(fields.Nested('OrderSchema', exclude = ['user']))
 
+    # Ensures the user inputs a password that is between 5 and 16 characters long that only consists of letters and numbers
     password = fields.String(required = True, validate = And(
         Length(min = 5, max = 16, error = 'Password must be between 5 and 16 characters long.'),
         Regexp('^[a-zA-Z0-9]+$', error = 'Only letters and numbers can be used for the password.')
     ))
+
+    # Only accepts letters and - for hyphenated names
+    first_name = fields.String(required = True, validate = (Regexp('^[a-zA-Z-]+$', error = 'Only letters can be used for user names.')))    
+    # Only accepts letters and - for hyphenated names
+    last_name = fields.String(required = True, validate = (Regexp('^[a-zA-Z-]+$', error = 'Only letters can be used for user names.')))
+    # Only accepts letters, numbers, spaces and .- for addresses
+    address = fields.String(required = True, validate = (Regexp('^[a-zA-Z0-9-. ]+$', error = 'Only letters, numbers, spaces and (.-) can be used for the address field.')))    
 
     class Meta:
         fields = ('id', 'first_name', 'last_name', 'address', 'email', 'password', 'is_admin', 'comments', 'orders')

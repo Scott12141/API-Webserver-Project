@@ -12,20 +12,22 @@ auth_bp = Blueprint('auth', __name__, url_prefix = '/auth')
 @auth_bp.route('/register', methods = ['POST'])
 def auth_register():
     try:
-        # retrieve data posted from the front end body in json format and store it in body_data
+        # retrieve JSON data parsed into the body from the front end as a python object and store it in body_data
         body_data = user_schema.load(request.get_json())
-        # then extract that data to the users model imported from the user models to create the user in the back end (database)
+        # then extract that JSON data posted to the front end into the users model imported from the user models to create the user in the back end (database)
         user = User()
         user.first_name = body_data.get('first_name')
         user.last_name = body_data.get('last_name')
         user.address = body_data.get('address')
         user.email = body_data.get('email')
+        # Hashes the users password to be stored in the database as a hash
         if body_data.get('password'):
             user.password = bcrypt.generate_password_hash(body_data.get('password')).decode('utf-8')
-
+        # Adds this user to the session
         db.session.add(user)
+        # Commits user that was added to the database
         db.session.commit()
-        # Now send a message to the front end with what data was stored in the back end(database)
+        # Now send a message to the front end in json form with what data was stored in the back end(database)
         return user_schema.dump(user), 201
     except IntegrityError as err:
         if err.orig.pgcode == errorcodes.UNIQUE_VIOLATION:
@@ -37,7 +39,7 @@ def auth_register():
 
 @auth_bp.route('/login', methods = ['POST'])
 def auth_login():
-    # retrieve data posted from the front end body in json format and store it in body_data
+    # retrieve JSON data parsed into the body from the front end as a python object and store it in body_data
     body_data = request.get_json()
     # Query the database to find a user by their email address
     qry = db.select(User).filter_by(email = body_data.get('email'))
@@ -53,4 +55,5 @@ def auth_login():
             return {'error': "password was incorrect, please try again"}, 401
     else:
         return {'error': "email does not exist, please try again"}, 401
+    
     

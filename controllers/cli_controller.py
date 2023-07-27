@@ -12,11 +12,13 @@ db_commands = Blueprint('db',  __name__)
 
 @db_commands.cli.command('drop')
 def drop_db():
+    # Deletes all tables in the database
     db.drop_all()
     print('Tables Dropped')
 
 @db_commands.cli.command('create')
 def create_db():
+    # Creates all tables in the database
     db.create_all()
     print('Tables Created')
 
@@ -138,7 +140,7 @@ def seed_db():
     ]
 
     db.session.add_all(orders)
-
+    # Seeds all of the database entries 
     db.session.commit()
 
     print("Tables Seeded")
