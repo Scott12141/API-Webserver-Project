@@ -4,7 +4,7 @@ from models.user import User
 from models.product import Product
 from models.comment import Comment
 from models.order import Order
-from datetime import date
+from datetime import date, timedelta
 
 
 db_commands = Blueprint('db',  __name__)
@@ -121,7 +121,7 @@ def seed_db():
             quantity = '1',
             status = 'In-queue',
             description = '2 tiered, red velvet, with white icing.',
-            delivery_pup_date = '2023/07/26',
+            delivery_pup_date = date.today() + timedelta(days = 6),
             user = users[1],
             product = products[1]
         ),
@@ -130,7 +130,7 @@ def seed_db():
             quantity = '1',
             status = 'In-queue',
             description = '6th Birthday spiderman mud cake for my son.',
-            delivery_pup_date = '2023/07/23',
+            delivery_pup_date = date.today() + timedelta(days = 3),
             user = users[2],
             product = products[0]
         ),
@@ -139,7 +139,7 @@ def seed_db():
             quantity = '1',
             status = 'In-queue',
             description = '6 x mars bar filling, 6 x snickers filling.',
-            delivery_pup_date = '2023/07/23',
+            delivery_pup_date = date.today() + timedelta(days = 2),
             user = users[2],
             product = products[3]
         )
