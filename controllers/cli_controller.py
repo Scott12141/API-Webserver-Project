@@ -4,7 +4,7 @@ from models.user import User
 from models.product import Product
 from models.comment import Comment
 from models.order import Order
-from datetime import date
+from datetime import date, timedelta
 
 
 db_commands = Blueprint('db',  __name__)
@@ -54,37 +54,43 @@ def seed_db():
             name = 'Celebration',
             description = 'Birthday, Anniversary etc.',
             price = 160.00,
-            prep_days = 2
+            prep_days = 2,
+            user = users[0]
         ),
         Product(
             name = 'Wedding',
             description = 'Multi-tiered etc.',
             price = 450.00,
-            prep_days = 5
+            prep_days = 5,
+            user = users[0]
         ),
         Product(
             name = 'Cupcakes x 6',
             description = 'Various kinds by the half-dozen etc.',
-            price = 15.99,
-            prep_days = 1
+            price = 18.99,
+            prep_days = 1,
+            user = users[0]
         ),
         Product(
             name = 'Cupcakes x 12',
             description = 'Various kinds by the dozen etc.',
-            price = 35.00,
-            prep_days = 1
+            price = 36.50,
+            prep_days = 1,
+            user = users[0]
         ),
         Product(
             name = 'Cupcakes x 18',
             description = 'Various kinds one and a half dozen etc.',
             price = 55.00,
-            prep_days = 1
+            prep_days = 1,
+            user = users[0]
         ),
         Product(
             name = 'Cupcakes x 24',
             description = 'Various kinds by the double-dozen etc.',
-            price = 75.00,
-            prep_days = 1
+            price = 72.50,
+            prep_days = 1,
+            user = users[0]
         )
     ]
     db.session.add_all(products)
@@ -115,7 +121,7 @@ def seed_db():
             quantity = '1',
             status = 'In-queue',
             description = '2 tiered, red velvet, with white icing.',
-            delivery_pup_date = '2023/07/26',
+            delivery_pup_date = date.today() + timedelta(days = 6),
             user = users[1],
             product = products[1]
         ),
@@ -124,7 +130,7 @@ def seed_db():
             quantity = '1',
             status = 'In-queue',
             description = '6th Birthday spiderman mud cake for my son.',
-            delivery_pup_date = '2023/07/23',
+            delivery_pup_date = date.today() + timedelta(days = 3),
             user = users[2],
             product = products[0]
         ),
@@ -133,7 +139,7 @@ def seed_db():
             quantity = '1',
             status = 'In-queue',
             description = '6 x mars bar filling, 6 x snickers filling.',
-            delivery_pup_date = '2023/07/23',
+            delivery_pup_date = date.today() + timedelta(days = 2),
             user = users[2],
             product = products[3]
         )
